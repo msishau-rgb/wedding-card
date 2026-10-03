@@ -1095,3 +1095,9 @@ body {
     font-size: clamp(1.8rem, 11vw, 2.8rem);
   }
 }
+.hero__eyebrow,
+.couple-name,
+.wedding-date {
+  color: var(--color-white);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+}
