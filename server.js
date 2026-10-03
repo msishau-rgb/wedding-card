@@ -21,7 +21,8 @@ const mimeTypes = {
 };
 
 const server = http.createServer((req, res) => {
-  const urlPath = req.url === '/' ? '/website.html' : req.url;
+  const requestUrl = new URL(req.url, 'http://localhost');
+  const urlPath = requestUrl.pathname === '/' ? '/website.html' : requestUrl.pathname;
   const resolvedPath = path.normalize(path.join(rootDir, urlPath));
 
   if (!resolvedPath.startsWith(rootDir)) {
