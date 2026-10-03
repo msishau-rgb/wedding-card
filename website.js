@@ -81,10 +81,10 @@ function applyWeddingConfig() {
 
   const formattedDate = formatWeddingDate(config.weddingDate);
 
-  if (brideElement) brideElement.innerHTML = formatNameLines(config.brideName);
-  if (groomElement) groomElement.innerHTML = formatNameLines(config.groomName);
-  if (brideElement2) brideElement2.innerHTML = formatNameLines(config.brideName);
-  if (groomElement2) groomElement2.innerHTML = formatNameLines(config.groomName);
+  if (brideElement) brideElement.innerHTML = formatNameLines(config.brideName.split(/\s+/)[0]);
+  if (groomElement) groomElement.innerHTML = formatNameLines(config.groomName.split(/\s+/)[0]);
+  if (brideElement2) brideElement2.innerHTML = formatNameLines(config.brideName.split(/\s+/)[0]);
+  if (groomElement2) groomElement2.innerHTML = formatNameLines(config.groomName.split(/\s+/)[0]);
   if (weddingDateElement) weddingDateElement.textContent = formattedDate;
   if (weddingDateElement2) weddingDateElement2.textContent = formattedDate;
   if (ceremonyDateElement) ceremonyDateElement.textContent = formattedDate;
