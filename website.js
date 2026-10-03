@@ -1,11 +1,11 @@
 const DEFAULT_WEDDING_CONFIG = {
   brideName: 'Mutakulwa Mubita',
   groomName: 'Robert Singogo',
-  weddingDate: '2026-10-30',
-  ceremonyTime: '10:00 AM',
-  ceremonyVenue: 'Kalulushi New Apostolic Church',
-  receptionTime: '2:00 PM',
-  receptionVenue: 'Kalulushi Municipal Council Civic Centre, Main Hall',
+  weddingDate: '2026-10-25',
+  ceremonyTime: '08:00',
+  ceremonyVenue: 'Kalulushi Civic Center',
+  receptionTime: '14:00',
+  receptionVenue: 'Kalulushi Civic Center',
   rsvpName: 'Mutakulwa & Robert',
   rsvpPhone: '+260 000 000 000',
   dressCode: 'Formal Elegance',
@@ -26,7 +26,7 @@ function getSavedWeddingConfig() {
 }
 
 function formatWeddingDate(dateValue) {
-  if (!dateValue) return '30 OCTOBER 2026';
+  if (!dateValue) return '25 OCTOBER 2026';
   if (/\d{4}-\d{2}-\d{2}/.test(dateValue)) {
     const date = new Date(`${dateValue}T00:00:00`);
     if (!Number.isNaN(date.getTime())) {
@@ -40,6 +40,18 @@ function formatWeddingDate(dateValue) {
   return String(dateValue).toUpperCase();
 }
 
+function formatNameLines(name) {
+  const value = String(name || '').trim();
+  if (!value) return '<span>NAME</span>';
+
+  return value
+    .toUpperCase()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => `<span>${part}</span>`)
+    .join('');
+}
+
 function applyWeddingConfig() {
   const savedConfig = getSavedWeddingConfig();
   const config = { ...DEFAULT_WEDDING_CONFIG, ...savedConfig };
@@ -50,42 +62,55 @@ function applyWeddingConfig() {
   const groomElement2 = document.getElementById('groom-name-2');
   const weddingDateElement = document.getElementById('wedding-date');
   const weddingDateElement2 = document.getElementById('wedding-date-2');
+  const ceremonyDateElement = document.getElementById('ceremony-date');
   const weddingTimeElement2 = document.getElementById('wedding-time-2');
   const venueElement2 = document.getElementById('venue-2');
   const ceremonyVenueElement = document.getElementById('ceremony-venue');
   const ceremonyTimeElement = document.getElementById('ceremony-time');
   const receptionVenueElement = document.getElementById('reception-venue');
   const receptionTimeElement = document.getElementById('reception-time');
+  const ceremonyTimeDetailElement = document.getElementById('ceremony-time-detail');
+  const ceremonyVenueDetailElement = document.getElementById('ceremony-venue-detail');
+  const ceremonyLocationDetailElement = document.getElementById('ceremony-location-detail');
+  const receptionTimeDetailElement = document.getElementById('reception-time-detail');
+  const receptionVenueDetailElement = document.getElementById('reception-venue-detail');
+  const receptionLocationDetailElement = document.getElementById('reception-location-detail');
   const rsvpContactElement = document.getElementById('rsvp-contact');
   const quoteElement = document.querySelector('.verse p');
   const quoteSourceElement = document.querySelector('.verse strong');
 
   const formattedDate = formatWeddingDate(config.weddingDate);
 
-  if (brideElement) brideElement.textContent = config.brideName.toUpperCase();
-  if (groomElement) groomElement.textContent = config.groomName.toUpperCase();
-  if (brideElement2) brideElement2.textContent = config.brideName.toUpperCase();
-  if (groomElement2) groomElement2.textContent = config.groomName.toUpperCase();
+  if (brideElement) brideElement.innerHTML = formatNameLines(config.brideName);
+  if (groomElement) groomElement.innerHTML = formatNameLines(config.groomName);
+  if (brideElement2) brideElement2.innerHTML = formatNameLines(config.brideName);
+  if (groomElement2) groomElement2.innerHTML = formatNameLines(config.groomName);
   if (weddingDateElement) weddingDateElement.textContent = formattedDate;
   if (weddingDateElement2) weddingDateElement2.textContent = formattedDate;
+  if (ceremonyDateElement) ceremonyDateElement.textContent = formattedDate;
   if (weddingTimeElement2) weddingTimeElement2.textContent = config.ceremonyTime || config.receptionTime || 'TIME';
   if (venueElement2) venueElement2.textContent = config.ceremonyVenue || config.receptionVenue || 'VENUE';
   if (ceremonyVenueElement) ceremonyVenueElement.textContent = config.ceremonyVenue;
   if (ceremonyTimeElement) ceremonyTimeElement.textContent = config.ceremonyTime;
   if (receptionVenueElement) receptionVenueElement.textContent = config.receptionVenue;
   if (receptionTimeElement) receptionTimeElement.textContent = config.receptionTime;
+  if (ceremonyTimeDetailElement) ceremonyTimeDetailElement.textContent = config.ceremonyTime;
+  if (ceremonyVenueDetailElement) ceremonyVenueDetailElement.textContent = config.ceremonyVenue;
+  if (ceremonyLocationDetailElement) ceremonyLocationDetailElement.textContent = config.ceremonyVenue;
+  if (receptionTimeDetailElement) receptionTimeDetailElement.textContent = config.receptionTime;
+  if (receptionVenueDetailElement) receptionVenueDetailElement.textContent = config.receptionVenue;
+  if (receptionLocationDetailElement) receptionLocationDetailElement.textContent = config.receptionVenue;
   if (rsvpContactElement) rsvpContactElement.textContent = `RSVP: ${config.rsvpName} • ${config.rsvpPhone}`;
   if (quoteElement) quoteElement.textContent = `“${config.quote}”`;
   if (quoteSourceElement) quoteSourceElement.textContent = config.quoteSource;
 
-  const mapUrl = encodeURIComponent(config.receptionVenue || 'Wedding Venue');
-  const mapButton = document.querySelector('.map-button');
-  if (mapButton) {
-    mapButton.href = `https://maps.google.com/?q=${mapUrl}`;
-  }
+  const mapUrl = `https://maps.google.com/?q=${encodeURIComponent(config.receptionVenue || 'Wedding Venue')}`;
+  document.querySelectorAll('.location-button').forEach((button) => {
+    button.href = mapUrl;
+  });
 }
 
-const weddingDate = new Date('2026-10-30T00:00:00');
+const weddingDate = new Date('2026-10-25T00:00:00');
 
 const revealItems = document.querySelectorAll('.reveal');
 

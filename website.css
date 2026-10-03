@@ -998,3 +998,56 @@ h1 span {
     min-height: 880px;
   }
 }
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.hero__content {
+  width: 100%;
+  max-width: 900px;
+  min-width: 0;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.hero__eyebrow,
+.wedding-date {
+  width: 100%;
+  max-width: 100%;
+  margin-inline: auto;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.hero__names {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.couple-name {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-inline: auto;
+  text-align: center;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  text-wrap: balance;
+}
+
+.ampersand {
+  margin-inline: auto;
+  text-align: center;
