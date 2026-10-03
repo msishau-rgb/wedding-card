@@ -4,10 +4,12 @@ const DEFAULT_WEDDING_CONFIG = {
   weddingDate: '2026-10-25',
   ceremonyTime: '08:00',
   ceremonyVenue: 'Kalulushi Civic Center',
+  ceremonyLocation: 'Kalulushi',
   receptionTime: '14:00',
   receptionVenue: 'Kalulushi Civic Center',
+  receptionLocation: 'Kalulushi',
   rsvpName: 'Mutakulwa & Robert',
-  rsvpPhone: '+260 000 000 000',
+  rsvpPhone: '0975725981',
   dressCode: 'Formal Elegance',
   specialMessage: 'We look forward to celebrating with you.',
   quote: 'Above all, put on love, which binds everything together in perfect harmony.',
@@ -15,6 +17,9 @@ const DEFAULT_WEDDING_CONFIG = {
   hasPhotos: true,
   photoCount: 0
 };
+
+const CEREMONY_MAP_URL = 'https://maps.google.com/?q=Kalulushi%20Civic%20Center';
+const RECEPTION_MAP_URL = 'https://maps.google.com/?q=Kalulushi%20Civic%20Center';
 
 function getSavedWeddingConfig() {
   try {
@@ -38,6 +43,17 @@ function formatWeddingDate(dateValue) {
     }
   }
   return String(dateValue).toUpperCase();
+}
+
+function toTelHref(phone) {
+  const digits = String(phone || '').replace(/\D/g, '');
+  if (digits.startsWith('0') && digits.length === 10) {
+    return `tel:+260${digits.slice(1)}`;
+  }
+  if (digits.startsWith('260')) {
+    return `tel:+${digits}`;
+  }
+  return digits ? `tel:${digits}` : 'tel:+260975725981';
 }
 
 function formatNameLines(name) {
@@ -75,7 +91,10 @@ function applyWeddingConfig() {
   const receptionTimeDetailElement = document.getElementById('reception-time-detail');
   const receptionVenueDetailElement = document.getElementById('reception-venue-detail');
   const receptionLocationDetailElement = document.getElementById('reception-location-detail');
+  const ceremonyMapLink = document.getElementById('ceremony-map-link');
+  const receptionMapLink = document.getElementById('reception-map-link');
   const rsvpContactElement = document.getElementById('rsvp-contact');
+  const rsvpPhoneElement = document.getElementById('rsvp-phone');
   const quoteElement = document.querySelector('.verse p');
   const quoteSourceElement = document.querySelector('.verse strong');
 
@@ -87,27 +106,41 @@ function applyWeddingConfig() {
   if (groomElement2) groomElement2.innerHTML = formatNameLines(config.groomName.split(/\s+/)[0]);
   if (weddingDateElement) weddingDateElement.textContent = formattedDate;
   if (weddingDateElement2) weddingDateElement2.textContent = formattedDate;
-  if (ceremonyDateElement) ceremonyDateElement.textContent = formattedDate;
+  if (ceremonyDateElement) {
+    ceremonyDateElement.textContent = formattedDate;
+    ceremonyDateElement.dateTime = config.weddingDate;
+  }
   if (weddingTimeElement2) weddingTimeElement2.textContent = config.ceremonyTime || config.receptionTime || 'TIME';
   if (venueElement2) venueElement2.textContent = config.ceremonyVenue || config.receptionVenue || 'VENUE';
   if (ceremonyVenueElement) ceremonyVenueElement.textContent = config.ceremonyVenue;
   if (ceremonyTimeElement) ceremonyTimeElement.textContent = config.ceremonyTime;
   if (receptionVenueElement) receptionVenueElement.textContent = config.receptionVenue;
   if (receptionTimeElement) receptionTimeElement.textContent = config.receptionTime;
-  if (ceremonyTimeDetailElement) ceremonyTimeDetailElement.textContent = config.ceremonyTime;
+  if (ceremonyTimeDetailElement) {
+    ceremonyTimeDetailElement.textContent = config.ceremonyTime;
+    ceremonyTimeDetailElement.dateTime = config.ceremonyTime;
+  }
   if (ceremonyVenueDetailElement) ceremonyVenueDetailElement.textContent = config.ceremonyVenue;
-  if (ceremonyLocationDetailElement) ceremonyLocationDetailElement.textContent = config.ceremonyVenue;
-  if (receptionTimeDetailElement) receptionTimeDetailElement.textContent = config.receptionTime;
+  if (ceremonyLocationDetailElement) ceremonyLocationDetailElement.textContent = config.ceremonyLocation;
+  if (receptionTimeDetailElement) {
+    receptionTimeDetailElement.textContent = config.receptionTime;
+    receptionTimeDetailElement.dateTime = config.receptionTime;
+  }
   if (receptionVenueDetailElement) receptionVenueDetailElement.textContent = config.receptionVenue;
-  if (receptionLocationDetailElement) receptionLocationDetailElement.textContent = config.receptionVenue;
-  if (rsvpContactElement) rsvpContactElement.textContent = `RSVP: ${config.rsvpName} • ${config.rsvpPhone}`;
+  if (receptionLocationDetailElement) receptionLocationDetailElement.textContent = config.receptionLocation;
+  if (rsvpContactElement) rsvpContactElement.textContent = config.rsvpName;
+  if (rsvpPhoneElement) {
+    const phoneLink = document.createElement('a');
+    phoneLink.className = 'rsvp-phone-link';
+    phoneLink.href = toTelHref(config.rsvpPhone);
+    phoneLink.textContent = config.rsvpPhone;
+    rsvpPhoneElement.replaceChildren(phoneLink);
+  }
   if (quoteElement) quoteElement.textContent = `“${config.quote}”`;
   if (quoteSourceElement) quoteSourceElement.textContent = config.quoteSource;
 
-  const mapUrl = `https://maps.google.com/?q=${encodeURIComponent(config.receptionVenue || 'Wedding Venue')}`;
-  document.querySelectorAll('.location-button').forEach((button) => {
-    button.href = mapUrl;
-  });
+  if (ceremonyMapLink) ceremonyMapLink.href = CEREMONY_MAP_URL;
+  if (receptionMapLink) receptionMapLink.href = RECEPTION_MAP_URL;
 }
 
 const weddingDate = new Date('2026-10-25T00:00:00');
@@ -334,5 +367,67 @@ if (form) {
     if (formStatus.textContent) {
       clearStatus();
     }
+  });
+}
+
+const photoLightbox = document.getElementById('photo-lightbox');
+
+if (photoLightbox) {
+  const photoLightboxImage = document.getElementById('photo-lightbox-image');
+  const photoLightboxClose = photoLightbox.querySelector('.photo-lightbox__close');
+  let previousBodyOverflow = '';
+  let previousScrollY = 0;
+  let activePhotoTrigger = null;
+
+  function restorePhotoLightboxState() {
+    document.body.style.overflow = previousBodyOverflow;
+    window.scrollTo(0, previousScrollY);
+    photoLightboxImage.removeAttribute('src');
+    photoLightboxImage.alt = '';
+  }
+
+  function closePhotoLightbox() {
+    if (!photoLightbox.open) return;
+    photoLightbox.close();
+    restorePhotoLightboxState();
+    activePhotoTrigger?.focus({ preventScroll: true });
+  }
+
+  document.querySelectorAll('.photo-story__trigger').forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      const sourceImage = trigger.querySelector('img');
+      if (!sourceImage || photoLightbox.open) return;
+
+      activePhotoTrigger = trigger;
+      previousBodyOverflow = document.body.style.overflow;
+      previousScrollY = window.scrollY;
+      photoLightboxImage.src = sourceImage.currentSrc || sourceImage.src;
+      photoLightboxImage.alt = sourceImage.alt;
+      document.body.style.overflow = 'hidden';
+      photoLightbox.showModal();
+      photoLightboxClose.focus();
+    });
+  });
+
+  photoLightboxClose.addEventListener('click', closePhotoLightbox);
+
+  photoLightbox.addEventListener('cancel', (event) => {
+    event.preventDefault();
+    closePhotoLightbox();
+  });
+
+  photoLightbox.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closePhotoLightbox();
+    }
+  });
+
+  photoLightbox.addEventListener('click', (event) => {
+    if (event.target === photoLightbox) closePhotoLightbox();
+  });
+
+  photoLightbox.addEventListener('close', () => {
+    if (!photoLightbox.open) restorePhotoLightboxState();
   });
 }

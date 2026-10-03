@@ -9,7 +9,7 @@ const DEFAULT_WEDDING_CONFIG = {
   receptionTime: '2:00 PM',
   receptionVenue: 'Kalulushi Municipal Council Civic Centre, Main Hall',
   rsvpName: 'Mutakulwa & Robert',
-  rsvpPhone: '+260 000 000 000',
+  rsvpPhone: '0975725981',
   dressCode: 'Formal Elegance',
   specialMessage: 'We look forward to celebrating with you.',
   quote: 'Above all, put on love, which binds everything together in perfect harmony.',
